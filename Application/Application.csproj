@@ -17,4 +17,13 @@
       <ProjectReference Include="..\Sdk\Sdk.csproj" />
     </ItemGroup>
 
+    <Target Name="CopyScripts" AfterTargets="Build">
+
+        <CreateItem Include="$(ProjectDir)scripts/**/*.js">
+            <Output TaskParameter="Include" ItemName="jsfilelist" />
+        </CreateItem>
+        
+        <Message Text="Copying javascrpt scripts to build output library" Importance="High" />
+        <Copy SourceFiles="@(jsfilelist)" DestinationFolder="$(TargetDir)/scripts" />
+    </Target>
 </Project>
