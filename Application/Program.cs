@@ -19,7 +19,7 @@ public class Program
         Console.WriteLine($"Found {_plugins.Count} plugins.");
     }
     
-    public async Task RunAsync()
+    public async Task RunAsync(string scriptContent)
     {
         // TODO: Consider jint https://github.com/sebastienros/jint
         var engine = new ScriptEngine();
@@ -61,10 +61,7 @@ public class Program
             }
         }
         
-        engine.Evaluate("hello()");
-        engine.Evaluate("let x = returnString(); console.log(x);");
-        engine.Evaluate("let integer = getInt(); console.log(`Today's random int is ${integer}`);");
-
+        engine.Evaluate(scriptContent);
     }
 
     private static void RegisterDelegate<T>(ScriptEngine engine, IPlugin plugin, PropertyInfo outputProperty)
