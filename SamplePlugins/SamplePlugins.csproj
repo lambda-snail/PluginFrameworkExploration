@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Sdk\Sdk.csproj" />
+    </ItemGroup>
+
+    <Target Name="CopyPlugins" AfterTargets="Build">
+        <Message Text="Copying plugins to extensions" Importance="High" />
+
+        <Copy SourceFiles="$(TargetDir)$(ProjectName).dll;$(TargetDir)$(ProjectName).pdb" DestinationFolder="$(TargetDir)../../../../Application/bin/Debug/net6.0/extensions/" />
+
+        <Message Text="Copied build files" Importance="High" />
+    </Target>
+    
+</Project>
