@@ -14,7 +14,7 @@
     
     <ItemGroup>
       <ProjectReference Include="..\SamplePlugins\SamplePlugins.csproj" />
-      <ProjectReference Include="..\Sdk\Sdk.csproj" />
+      <!--ProjectReference Include="..\Sdk\Sdk.csproj" /-->
     </ItemGroup>
 
     <Target Name="CopyScripts" AfterTargets="Build">
@@ -26,4 +26,10 @@
         <Message Text="Copying javascrpt scripts to build output library" Importance="High" />
         <Copy SourceFiles="@(jsfilelist)" DestinationFolder="$(TargetDir)/scripts" />
     </Target>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Sdk\Sdk.csproj"
+                          OutputItemType="Analyzer"
+                          ReferenceOutputAssembly="true" />
+    </ItemGroup>
 </Project>

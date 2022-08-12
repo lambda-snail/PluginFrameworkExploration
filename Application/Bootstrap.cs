@@ -1,9 +1,9 @@
-﻿using System.Text;
-using Application;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-public partial class Bootstrap
+namespace Application;
+
+public static partial class Bootstrap
 {
     public static async Task Main(string[] args)
     {
@@ -11,6 +11,8 @@ public partial class Bootstrap
             .ConfigureServices((_, services) =>
                 Bootstrap.ConfigureServices(services))
             .Build();
+        
+        HelloFrom("Main");
         
         Program p = host.Services.GetRequiredService<Program>();
 
@@ -28,23 +30,12 @@ public partial class Bootstrap
         }
     }
 
+    static partial void HelloFrom(string name);
+
     private static async Task<string> LoadScriptIntoMemory(string? scriptName)
     {
         string scriptPath = Path.Combine(Directory.GetCurrentDirectory(), "scripts", scriptName);
         return await System.IO.File.ReadAllTextAsync(scriptPath);
-        // StringBuilder builder = new StringBuilder();
-        // await using var fs = File.Open(scriptPath, FileMode.Open);
-        //
-        // byte[] b = new byte[1024];
-        // UTF8Encoding temp = new UTF8Encoding(true);
-        //
-        // while (fs.Read(b, 0, b.Length) > 0)
-        // {
-        //     string s = temp.GetString(b).Trim();
-        //     builder.Append(s);
-        // }
-
-        //return builder.ToString();
     }
 
     public static void ConfigureServices(IServiceCollection services)
