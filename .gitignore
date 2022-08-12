@@ -3,3 +3,6 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+SamplePlugins.dll
+SamplePlugins.pdb
+Application/Application.csproj.DotSettings
