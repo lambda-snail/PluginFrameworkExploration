@@ -16,6 +16,15 @@ public class OutputAttribute : Attribute
     }
 }
 
+public class InputAttribute : Attribute
+{
+    public ReturnType Type { get; set; }
+    public InputAttribute(ReturnType type)
+    {
+        Type = type;
+    }
+}
+
 public enum ReturnType
 {
     Bool,

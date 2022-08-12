@@ -6,9 +6,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
+    <!--ItemGroup>
       <ProjectReference Include="..\Sdk\Sdk.csproj" />
-    </ItemGroup>
+    </ItemGroup-->
 
     <Target Name="CopyPlugins" AfterTargets="Build">
         <Message Text="Copying plugins to extensions" Importance="High" />
@@ -17,5 +17,11 @@
 
         <Message Text="Copied build files" Importance="High" />
     </Target>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Sdk\Sdk.csproj"
+                          OutputItemType="Analyzer"
+                          ReferenceOutputAssembly="true" />
+    </ItemGroup>
     
 </Project>
