@@ -8,7 +8,7 @@ namespace Application;
 
 public class Program
 {
-    private readonly List<IPlugin> _plugins;
+    private readonly List<IJSOperation> _plugins;
     public Program()
     {
         _plugins = LoadExtensions();
@@ -33,7 +33,7 @@ public class Program
                 var getDelegate = plugin.GetType().GetMethod("GetDelegate");
                 if (getDelegate is null)
                 {
-                    throw new InvalidOperationException($"Unable to find the GetDelegate method on IPlugin instance '{plugin.Name}' with Output attribute.");
+                    throw new InvalidOperationException($"Unable to find the GetDelegate method on IJSOperation instance '{plugin.Name}' with Output attribute.");
                 }
 
                 engine.SetGlobalFunction(plugin.Name, (Delegate) getDelegate.Invoke(plugin, null));
@@ -47,13 +47,13 @@ public class Program
         engine.Evaluate(scriptContent);
     }
 
-    private static void RegisterDelegate<T>(ScriptEngine engine, IPlugin plugin, PropertyInfo outputProperty)
+    private static void RegisterDelegate<T>(ScriptEngine engine, IJSOperation ijsOperation, PropertyInfo outputProperty)
     {
-        engine.SetGlobalFunction(plugin.Name, new
+        engine.SetGlobalFunction(ijsOperation.Name, new
             Func<T>(() =>
             {
-                plugin.Execute();
-                return (T) outputProperty.GetValue(plugin);
+                ijsOperation.Execute();
+                return (T) outputProperty.GetValue(ijsOperation);
             }));
     }
 
@@ -65,19 +65,19 @@ public class Program
         }
     }
     
-    List<IPlugin> LoadExtensions()
+    List<IJSOperation> LoadExtensions()
     {
-        var plugins = new List<IPlugin>();
+        var plugins = new List<IJSOperation>();
         var files = Directory.GetFiles("extensions", "*.dll");
 
         foreach (var file in files)
         {
             var assembly = Assembly.LoadFile(Path.Combine(Directory.GetCurrentDirectory(), file));
             
-            var types = assembly.GetTypes().Where(t => typeof(IPlugin).IsAssignableFrom(t) && !t.IsInterface).ToArray();
+            var types = assembly.GetTypes().Where(t => typeof(IJSOperation).IsAssignableFrom(t) && !t.IsInterface).ToArray();
             foreach (var type in types)
             {
-                var instance = Activator.CreateInstance(type) as IPlugin;
+                var instance = Activator.CreateInstance(type) as IJSOperation;
                 plugins.Add(instance);
             }
         }

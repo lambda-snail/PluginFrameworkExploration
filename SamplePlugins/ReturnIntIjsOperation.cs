@@ -2,7 +2,7 @@ using Application.Sdk;
 
 namespace SamplePlugins;
 
-public partial class ReturnIntPlugin : IPlugin
+public partial class ReturnIntIjsOperation : IJSOperation
 {
     public string Name { get; set; } = "getInt";
 

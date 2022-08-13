@@ -21,12 +21,12 @@ public class PluginGenerator : ISourceGenerator
     public void Execute(GeneratorExecutionContext context)
     {
         var syntaxTrees = context.Compilation.SyntaxTrees;
-        var handlers = syntaxTrees.Where(n => n.GetText().ToString().Contains("IPlugin"));
+        var handlers = syntaxTrees.Where(n => n.GetText().ToString().Contains("IJSOperation"));
 
         foreach (var handler in handlers)
         {
             var classDeclarationsList = handler.GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>();
-            if (!classDeclarationsList.Any() || !ImplementsInterface(classDeclarationsList.First(), "IPlugin")) { continue; }
+            if (!classDeclarationsList.Any() || !ImplementsInterface(classDeclarationsList.First(), "IJSOperation")) { continue; }
 
             var classDeclaration = classDeclarationsList.First();
             
@@ -39,7 +39,7 @@ public class PluginGenerator : ISourceGenerator
                     "PLUGIN001",
                     "At most one output parameter allowed",
                     "At most one property can be decorated with the [Output] attribute",
-                    "Plugin Framework",
+                    "JSOperation Plugin Framework",
                     DiagnosticSeverity.Error,
                     true);
 

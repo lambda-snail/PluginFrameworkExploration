@@ -1,6 +1,6 @@
 namespace Application.Sdk;
 
-public interface IPlugin
+public interface IJSOperation
 {
     public string Name { get; set; }
     void Execute();
