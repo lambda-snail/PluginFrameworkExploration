@@ -6,7 +6,7 @@ public partial class ReturnIntOperation : IJSOperation
 {
     public string Name { get; set; } = "getInt";
 
-    [Output(ReturnType.Int)]
+    [Output]
     public int OutInt { get; set; }
     public void Execute()
     {

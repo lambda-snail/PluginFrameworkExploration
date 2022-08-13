@@ -101,6 +101,7 @@ public class PluginGenerator : ISourceGenerator
                     sourceCodeBuilder.Append(
                     @$"
                     namespace {namespaceDefinition};
+                    // This code is generated automatically
                     public partial class {className}
                     {{
                         public Func<{string.Join(",", signature)},{returnType}> GetDelegate()
@@ -114,6 +115,7 @@ public class PluginGenerator : ISourceGenerator
                     sourceCodeBuilder.Append(
                     @$"
                     namespace {namespaceDefinition};
+                    // This code is generated automatically
                     public partial class {className}
                     {{
                         public Func<{returnType}> GetDelegate()

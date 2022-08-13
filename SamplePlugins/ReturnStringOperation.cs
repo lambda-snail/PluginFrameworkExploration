@@ -6,7 +6,7 @@ public partial class ReturnStringOperation : IJSOperation
 {
     public string Name { get; set; } = "returnString";
 
-    [Output(ReturnType.String)]
+    [Output]
     public string ReturnValue { get; set; }
 
     public void Execute()
