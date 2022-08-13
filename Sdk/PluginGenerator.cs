@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -29,7 +30,7 @@ public class PluginGenerator : ISourceGenerator
             if (!classDeclarationsList.Any() || !ImplementsInterface(classDeclarationsList.First(), "IJSOperation")) { continue; }
 
             var classDeclaration = classDeclarationsList.First();
-            
+
             var properties = classDeclaration.DescendantNodes().OfType<PropertyDeclarationSyntax>();
 
             var outputProperty = properties.Where(p => p.AttributeLists.Any(pp => pp.ToString().StartsWith("[Output")));
@@ -51,13 +52,31 @@ public class PluginGenerator : ISourceGenerator
             {
                 var desc = new DiagnosticDescriptor(
                     "PLUGIN002",
-                    "There are now input properties here",
+                    "There are no input properties here",
                     "This is just a test to see if things are detected correctly",
                     "Plugin Framework",
                     DiagnosticSeverity.Warning,
                     true);
 
                 context.ReportDiagnostic(Diagnostic.Create(desc, classDeclaration.GetLocation()));
+            }
+
+            StringBuilder initializationStatements = new();
+            List<string> parameters = new();
+            List<string> signature = new();
+            if (inputProperties.Count() > 0)
+            {
+                foreach (var propertySyntax in inputProperties)
+                {
+                    var propertyName = propertySyntax.Identifier.ToString();
+                    var propertyType = propertySyntax.Type.ToString();
+                    signature.Add(propertyType);
+                    
+                    var parameterName = propertyName + "_param";
+                    parameters.Add($"{propertyType} {parameterName}");
+
+                    initializationStatements.Append($"{propertyName}={parameterName};");
+                }
             }
 
             if (outputProperty.Count() == 1)
@@ -75,8 +94,24 @@ public class PluginGenerator : ISourceGenerator
                 var returnType = property.Type.ToString();
 
                 var className = classDeclaration.Identifier.ToString();
-                
-                sourceCodeBuilder.Append(
+
+                // TODO: Refactor this
+                if (inputProperties.Count() > 0)
+                {
+                    sourceCodeBuilder.Append(
+                    @$"
+                    namespace {namespaceDefinition};
+                    public partial class {className}
+                    {{
+                        public Func<{string.Join(",", signature)},{returnType}> GetDelegate()
+                        {{
+                            return ({string.Join(",", parameters)}) => {{ {initializationStatements} Execute(); return {propertyName}; }};
+                        }}
+                    }}");
+                }
+                else
+                {
+                    sourceCodeBuilder.Append(
                     @$"
                     namespace {namespaceDefinition};
                     public partial class {className}
@@ -86,6 +121,7 @@ public class PluginGenerator : ISourceGenerator
                             return () => {{ Execute(); return {propertyName}; }};
                         }}
                     }}");
+                }
 
                 context.AddSource($"{className}.g.cs", sourceCodeBuilder.ToString());
             }

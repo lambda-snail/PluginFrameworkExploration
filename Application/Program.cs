@@ -28,7 +28,13 @@ public class Program
                     .GetType()
                     .GetProperties(BindingFlags.Instance | BindingFlags.Public)
                     .FirstOrDefault(prop => Attribute.IsDefined(prop, typeof(OutputAttribute)));
-            if (outputProperty is not null)
+            
+            var inputProperty =
+                plugin
+                    .GetType()
+                    .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                    .FirstOrDefault(prop => Attribute.IsDefined(prop, typeof(InputAttribute)));
+            if (outputProperty is not null || inputProperty is not null)
             {
                 var getDelegate = plugin.GetType().GetMethod("GetDelegate");
                 if (getDelegate is null)
