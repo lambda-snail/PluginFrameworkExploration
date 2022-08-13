@@ -2,7 +2,7 @@ using Application.Sdk;
 
 namespace SamplePlugins;
 
-public partial class ReturnStringIjsOperation : IJSOperation
+public partial class ReturnStringOperation : IJSOperation
 {
     public string Name { get; set; } = "returnString";
 

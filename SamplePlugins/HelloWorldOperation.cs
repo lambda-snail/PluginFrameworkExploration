@@ -2,7 +2,7 @@
 
 namespace SamplePlugins;
 
-public class HelloWorldIjsOperation : IJSOperation
+public class HelloWorldOperation : IJSOperation
 {
     public string Name { get; set; } = "hello";
     public void Execute()
