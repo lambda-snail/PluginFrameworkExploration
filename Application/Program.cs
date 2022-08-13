@@ -1,18 +1,14 @@
-
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime;
-using System.Runtime.CompilerServices;
 using Application.Sdk;
 using Jurassic;
 using Jurassic.Library;
+using SamplePlugins;
 
 namespace Application;
 
 public class Program
 {
     private readonly List<IPlugin> _plugins;
-
     public Program()
     {
         _plugins = LoadExtensions();
@@ -34,26 +30,13 @@ public class Program
                     .FirstOrDefault(prop => Attribute.IsDefined(prop, typeof(OutputAttribute)));
             if (outputProperty is not null)
             {
-                var outputAttribute = Attribute.GetCustomAttribute(outputProperty, typeof(OutputAttribute)) as OutputAttribute;
-
-                switch (outputAttribute!.Type)
+                var getDelegate = plugin.GetType().GetMethod("GetDelegate");
+                if (getDelegate is null)
                 {
-                    case ReturnType.String:
-                        RegisterDelegate<string>(engine, plugin, outputProperty);
-                        break;
-                    case ReturnType.Int:
-                        RegisterDelegate<int>(engine, plugin, outputProperty);
-                        break;
-                    case ReturnType.Bool:
-                        RegisterDelegate<bool>(engine, plugin, outputProperty);
-                        break;
-                    case ReturnType.Double:
-                        RegisterDelegate<double>(engine, plugin, outputProperty);
-                        break;
-                    default:
-                        throw new InvalidOperationException($"Unknown return type: {outputAttribute.Type}");
+                    throw new InvalidOperationException($"Unable to find the GetDelegate method on IPlugin instance '{plugin.Name}' with Output attribute.");
                 }
 
+                engine.SetGlobalFunction(plugin.Name, (Delegate) getDelegate.Invoke(plugin, null));
             }
             else
             {
